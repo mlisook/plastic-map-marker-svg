@@ -1,0 +1,29 @@
+{
+  "name": "plastic-map-marker-svg",
+  "version": "0.0.1",
+  "description": "Custom SVG markers for google-map",
+  "main": "plastic-map-marker-svg.html",
+  "license": "MIT",
+  "keywords": [
+    "polymer",
+    "polymer 2.0",
+    "google-map",
+    "marker",
+    "web-components",
+    "svg"
+  ],
+  "dependencies": {
+    "polymer": "Polymer/polymer#^2.0.0",
+    "iron-meta": "PolymerElements/iron-meta#^2.0.2"
+  },
+  "devDependencies": {
+    "iron-demo-helpers": "PolymerElements/iron-demo-helpers#^2.0.0",
+    "web-component-tester": "Polymer/web-component-tester#^6.0.0",
+    "webcomponentsjs": "webcomponents/webcomponentsjs#^1.0.0",
+    "google-map": "GoogleWebComponents/google-map#^2.0.1",
+    "plastic-aspect-ratio": "^1.0.0"
+  },
+  "resolutions": {
+    "polymer": "^2.0.0"
+  }
+}

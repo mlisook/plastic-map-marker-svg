@@ -1,0 +1,146 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, minimum-scale=1, initial-scale=1, user-scalable=yes">
+
+  <title>base functions test</title>
+
+  <script src="../../mocha/mocha.js"></script>
+  <script src="../../chai/chai.js"></script>
+  <script src="../../webcomponentsjs/webcomponents-lite.js"></script>
+  <script src="../../web-component-tester/browser.js"></script>
+
+  <!-- <link rel="import" href="../plastic-map-marker-svg.html"> -->
+  <link rel="import" href="sample-markers.html">
+</head>
+
+<body>
+
+  <test-fixture id="BasicTestFixture">
+    <template>
+      <!-- no test markup -->
+    </template>
+  </test-fixture>
+
+
+  <script>
+    describe('plastic-map-marker-set processing', () => {
+      let testFixture1;
+
+      beforeEach(() => {
+        testFixture1 = fixture('BasicTestFixture');
+      });
+      context('Meta registration', () => {
+        it('should be registered', () => {
+          let meta = Polymer.Base.create('iron-meta', {
+            type: 'plasticMapMarkerSet'
+          });
+          expect(meta ? true : false).to.eql(true);
+          expect(meta.byKey('sample-markers') ? true : false).to.eql(true);
+        });
+        it('should have 2 elements', () => {
+          let meta = Polymer.Base.create('iron-meta', {
+            type: 'plasticMapMarkerSet'
+          });
+          let sampleSet = meta.byKey('sample-markers');
+          let markerArray = sampleSet.getMarkerNames();
+          expect(markerArray.length).to.eql(2);
+          expect(markerArray[0]).to.eql('sample-markers:boxedcircle');
+          expect(markerArray[1]).to.eql('sample-markers:flag');
+        });
+      });
+      context('data source manipulation', () => {
+        let meta = Polymer.Base.create('iron-meta', {
+          type: 'plasticMapMarkerSet'
+        });
+        let sampleSet = meta.byKey('sample-markers');
+
+        let testData = {
+          foo: 345,
+          bar: 456,
+          grp: {
+            f: "abc",
+            g: "one",
+            h: {
+              i: "two"
+            }
+          }
+        };
+        it('should retrieve data from a specified path', () => {
+          expect(sampleSet._getValueFromPath(testData, "foo")).to.eql("345");
+          expect(sampleSet._getValueFromPath(testData, "grp.f")).to.eql("abc");
+          expect(sampleSet._getValueFromPath(testData, "grp.h.i")).to.eql("two");
+        });
+        it('should return empty string for a path that does not exist', () => {
+          expect(sampleSet._getValueFromPath(testData, "fiz")).to.eql("");
+          expect(sampleSet._getValueFromPath(testData, "grp.x")).to.eql("");
+          expect(sampleSet._getValueFromPath(testData, "grp.h.i.j")).to.eql("");
+        });
+
+      });
+
+      context('svg string retrieve', () => {
+        let meta = Polymer.Base.create('iron-meta', {
+          type: 'plasticMapMarkerSet'
+        });
+        let sampleSet = meta.byKey('sample-markers');
+
+        let testData = {
+          color: "blue",
+          tcolor: "white",
+          mtext: 456
+        };
+        it('should get marker as svg string', () => {
+          expect(sampleSet._getMarkerSvgString("boxedcircle", 24, 24).substring(0, 5)).to.eql("<svg ");
+        });
+        it('should substitute data into svg string', () => {
+          let flag = sampleSet._getMarkerSvgString("flag", 64, 96);
+          let flagsub = sampleSet._substituteInSvg(flag, testData);
+          expect(flagsub.indexOf('[[')).to.eql(-1);
+          expect(flagsub.indexOf(']]')).to.eql(-1);
+          expect(flagsub.indexOf('fill="white"') > 0).to.eql(true);
+          expect(flagsub.indexOf('bold;">456</text>') > 0).to.eql(true);
+        });
+        it('should retrieve a data url', () => {
+          let flag = sampleSet._getMarkerSvgString("flag", 64, 96);
+          let flagsub = sampleSet._substituteInSvg(flag, testData);
+          let durl = sampleSet._dataUrl(flagsub);
+          expect(durl ? true : false).to.eql(true);
+          expect(durl.length > flagsub.length).to.eql(true);
+          expect(durl.substring(0, 19)).to.eql('data:image/svg+xml;');
+        });
+      });
+/* 
+      context('marker retrieve', () => {
+        let meta = Polymer.Base.create('iron-meta', {
+          type: 'plasticMapMarkerSet'
+        });
+        let sampleSet = meta.byKey('sample-markers');
+        let testData = {
+          color: "blue",
+          tcolor: "white",
+          mtext: 456
+        };
+
+        it('should retrieve a map marker', () => {
+          
+          return new Promise((resolve, reject) => {
+            google.maps.event.addDomListener(window, 'load', () => {
+              resolve(null);
+            });
+          })
+          .then(() => {
+            let marker = sampleSet.getMarkerIcon('flag', 64, 96, testData);
+            expect(marker ? true : false).to.eql(true);
+          });
+        });
+      });
+ */
+    });
+  </script>
+
+</body>
+
+</html>
