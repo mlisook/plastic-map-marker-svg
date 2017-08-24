@@ -6,7 +6,10 @@
   <meta name="viewport" content="width=device-width, minimum-scale=1, initial-scale=1, user-scalable=yes">
 
   <title>plastic-map-marker-svg demo</title>
-
+  <script>
+    // use your own api key 
+    window.useYourOwnApiKey = "AIzaSyBmsetVvB1KlWoSbEXYQg1leRZO1PVPm_Q";
+  </script>
   <script src="../../webcomponentsjs/webcomponents-lite.js"></script>
 
   <link rel="import" href="../../iron-demo-helpers/demo-pages-shared-styles.html">
@@ -33,22 +36,24 @@
         <dom-bind id="domb">
           <template id="t" is="dom-bind">
             <plastic-aspect-ratio style="width:100%;" aspect-width="4" aspect-height="3">
-              <google-map id="gm" style="width:100%;height:100%;" latitude="37.779" longitude="-122.3892" min-zoom="9" max-zoom="11" language="en"
-                api-key="[[apiKey]]">
-                <template is="dom-repeat" items="[[points]]">
-                  <plastic-map-marker-svg slot="markers" latitude="[[item.lat]]" longitude="[[item.lng]]" icon-name="[[item.markerStyle.iconName]]"
-                    icon-height="[[item.markerStyle.height]]" icon-width="[[item.markerStyle.width]]" icon-data="[[item.markerStyle.iconData]]">
-                    <p>Yo! Some infowindow stuff!</p>
-                  </plastic-map-marker-svg>
-                </template>
-              </google-map>
+              <template is="dom-if" if="[[apiKey]]">
+                <google-map id="gm" style="width:100%;height:100%;" latitude="37.779" longitude="-122.3892" min-zoom="9" max-zoom="11" language="en"
+                  api-key="[[apiKey]]">
+                  <template is="dom-repeat" items="[[points]]">
+                    <plastic-map-marker-svg slot="markers" latitude="[[item.lat]]" longitude="[[item.lng]]" icon-name="[[item.markerStyle.iconName]]"
+                      icon-height="[[item.markerStyle.height]]" icon-width="[[item.markerStyle.width]]" icon-data="[[item.markerStyle.iconData]]">
+                      <p>Yo! Some infowindow stuff!</p>
+                    </plastic-map-marker-svg>
+                  </template>
+                </google-map>
+              </template>
             </plastic-aspect-ratio>
           </template>
         </dom-bind>
         <script>
           let domb = document.getElementById("domb");
           // replace with your own google api key
-          domb.apiKey = "AIzaSyBmsetVvB1KlWoSbEXYQg1leRZO1PVPm_Q";
+          domb.apiKey = window.useYourOwnApiKey;
           domb.points = [];
           window.addEventListener('WebComponentsReady', () => {
             domb.points = [{
