@@ -46,7 +46,7 @@ While it's not actual data binding, marker definitions can have substitution poi
 
 ## Using Your Icons
 ### In Code
-You can get a `google.map.icon` object for your marker icon by calling the static method `getMarkerSetIcon' of the `PlasticMapMarkerSet` which returns a `Promise` for a `google.map.icon` object:
+You can get a `google.map.icon` object for your marker icon by calling the static method `getMarkerSetIcon` of the `PlasticMapMarkerSet` which returns a `Promise` for a `google.map.icon` object:
 ```HTML
 <google-map id="gm" style="width:100%;height:100%;" latitude="37.779" longitude="-122.3892" min-zoom="9" max-zoom="11" language="en" api-key="[[apiKey]]" on-google-map-ready="mapReady">
     <template is="dom-repeat" items="[[points]]">
