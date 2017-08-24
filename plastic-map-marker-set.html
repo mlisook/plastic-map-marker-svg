@@ -1,0 +1,367 @@
+<!--
+@license MIT
+-->
+
+<link rel="import" href="../polymer/polymer-element.html">
+<link rel="import" href="../iron-meta/iron-meta.html">
+
+<script>
+  /**
+   * Based on iron-iconset-svg, the `plastic-map-marker-set` 
+   * element allows users to define their own sets
+   * custom SVG map marker icons for use with google-map. 
+   * 
+   * Define a set of SVG markers by creating your own custom
+   * element, wrapping your SVG definitions in a `plastic-map-marker-set` element.
+   * 
+   * The svg map marker icon elements should be direct children of the
+   * `plastic-map-marker-set` element. Marker icons should be given distinct id's.
+   * Only top level definitions - `g` elements that are direct children
+   * of the `defs` element should have an `id` attribute.
+   * 
+   * Each definition should have a `viewBox`. This is essential for scaling. If
+   * a definition is missing a viewBox, a default of '0 0 24 24' will be used.
+   *
+   * Example:
+   *
+   *     <plastic-map-marker-set name="my-map-markers" >
+   *       <svg>
+   *         <defs>
+   *           <g id="boxedcircle" viewBox="0 0 24 24">
+   *             <rect style="fill:yellow; stroke:blue;" x="24" y="0" width="24" height="24" />
+   *             <circle style="fill:blue;stroke:white;" cx="12" cy="12" r="6" />
+   *           </g>
+   *           <g id="flag" viewBox="0 0 32 48" >
+   *             <path d="M 1.087 15.462 L 12.419 53.343 L 15.605 51.521 L 4.273 13.638 L 1.087 15.462 Z 
+   *             M 25.973 12.717 C 25.973 12.717 21.447 21.281 14.752 12.024 L 14.752 12.04 
+   *             C 9.979 5.267 5.83 12.973 5.83 12.973 L 12.55 35.288 C 12.55 35.288 15.341 24.327 23.771 35.981 
+   *             L 23.771 35.964 C 28.546 42.739 32.692 35.032 32.692 35.032 L 25.973 12.717 Z"
+   *              style="fill: [[color]];" />
+   *             <text x="12" y="27" fill="[[tcolor]]" style="font-family: Verdana; font-size: 9px; font-weight: bold;">[[mtext]]</text>
+   *             </svg>
+   *           </g>
+   *         </defs>
+   *       </svg>
+   *     </plastic-map-marker-set>
+   *
+   * This will automatically register the map marker icon set "my-map-markers" with Polymer.
+   * 
+   * While it's not actual data binding, marker definitions can have substitutiion points (see "flag" 
+   * marker above), marked with [[some.data.path]] that will be substituted in when you request the
+   * marker.
+   *
+   * To get a marker you can call the static method getMarkerSetIcon which returns a Promise
+   * for a google.map.icon:
+   * 
+   *   PlasticMapMarkerSvg.getMarkerSetIcon(setName, iconName, width, height, dataObj)
+   *     .then((icon) => {
+   *       // do something with the icon
+   *     });
+   *
+   * @element plastic-map-marker-set
+   * @demo demo/index.html
+   */
+
+  /**
+   * `plastic-map-marker-set`
+   * Custom set of SVG marker icons for google-map
+   *
+   */
+  class PlasticMapMarkerSet extends Polymer.Element {
+    static get is() {
+      return 'plastic-map-marker-set';
+    }
+    static get properties() {
+      return {
+        /**
+         * The name of the marker icon set.
+         */
+        name: {
+          type: String,
+          observer: '_nameChanged'
+        }
+
+      };
+    }
+
+    // 
+    // many of these methods are based on iron-iconset-svg and are marked #IIS
+    // in the method description
+    //
+
+    /**
+     * register the marker icon set with Polymer when created
+     * #IIS
+     */
+    created() {
+      this._meta = new Polymer.IronMeta({
+        type: 'plasticMapMarkerSet',
+        key: null,
+        value: null
+      });
+    }
+
+    /**
+     * This type of element should not be attached to the DOM,
+     * so if it is, set it's display to none.
+     * #IIS
+     */
+    attached() {
+      this.style.display = 'none';
+    }
+
+    /**
+     * When name is changed, register iconset metadata
+     * #IIS
+     */
+    _nameChanged() {
+      if (!this._meta) {
+        this._meta = new Polymer.IronMeta({
+          type: 'plasticMapMarkerSet',
+          key: null,
+          value: null
+        });
+      }
+      this._meta.value = null;
+      this._meta.key = this.name;
+      this._meta.value = this;
+
+      this.dispatchEvent(new CustomEvent('plastic-map-marker-set-added', {
+        detail: {
+          set: this.name,
+          element: this
+        }
+      }));
+      document.dispatchEvent(new CustomEvent('plastic-map-marker-set-added', {
+        detail: {
+          set: this.name,
+          element: this
+        }
+      }));
+    }
+
+    /**
+     * Construct an array of all marker names in this set.
+     * #IIS
+     *
+     * @return {!Array} Array of marker names.
+     */
+    getMarkerNames() {
+      this._icons = this._createIconMap();
+      return Object.keys(this._icons).map((n) => {
+        return this.name + ':' + n;
+      });
+    }
+
+    /**
+     * returns a google map icon from the requested SVG
+     * marker icon definition.
+     * @param {String} id - marker id
+     * @param {Number} width - width of the marker
+     * @param {Number} height - height of the marker
+     * @param {Object} substitutionData - an object to be used as a source for substitution into the marker
+     * @return {google.maps.Icon}
+     */
+    getMarkerIcon(id, width, height, substitutiionData) {
+      if (!id) {
+        return undefined;
+      }
+      let h = height && height >= 2 ? height : 24;
+      let w = width && width >= 2 ? width : h;
+      let svg = this._getMarkerSvgString(id, w, h);
+      if (!svg) {
+        return undefined;
+      }
+      svg = this._substituteInSvg(svg, substitutiionData);
+      // return google.maps.Icon object
+      return {
+        // anchor: new google.maps.Point(Math.floor(w / 2), Math.floor(h)),
+        anchor: {
+          x: Math.floor(w / 2),
+          y: Math.floor(h)
+        },
+        url: this._dataUrl(svg) //,
+        // size: new google.maps.Size(w, h)
+      };
+    }
+
+    /**
+     * Encodes SVG element as a data URL
+     * @param {String} svg - SVG element markup as a string
+     * @return {String} - a string data url
+     */
+    _dataUrl(svg) {
+      return 'data:image/svg+xml;charset=utf-8,' +
+        encodeURIComponent(svg);
+    }
+
+    /**
+     * substitutes data from the dataObj into the src markup
+     * @param {String} src - source svg markup
+     * @param {Object} dataObj - data to be substituted in
+     * @return {String} - the modified svg markup
+     */
+    _substituteInSvg(src, dataObj) {
+      let result = src;
+      if (dataObj) {
+        let markRegex = /\[\[([\w\.]+)\]\]/g;
+
+        let subList = [];
+        let match = markRegex.exec(src);
+        if (match) {
+          // add all matches to the array
+          while (match != null) {
+            subList.push({
+              matchedText: match[0],
+              path: match[1]
+            });
+            match = markRegex.exec(src);
+          }
+          // for each substitution, replace the marker with dataObj value
+          subList.forEach((s) => {
+            result = result.replace(s.matchedText, this._getValueFromPath(dataObj, s.path));
+          });
+        }
+      }
+      return result;
+    }
+
+    /**
+     * returns a string value from the dataObj by following the path
+     * e.g. if path="foo.bar.bin.fiz", this will return dataObj.foo.bar.bin.fiz 
+     * or an empty string if one of those nodes is undefined.
+     * @param {Object} dataObj 
+     * @param {String} path - data path
+     * @return {String}
+     */
+    _getValueFromPath(dataObj, path) {
+      let oref = dataObj;
+      let pathArray = path.split('.');
+      pathArray.forEach((p) => {
+        if (oref != null) {
+          oref = oref && oref[p] != undefined ? oref[p] : null;
+        }
+      });
+      return oref != null ? oref.toString() : "";
+    }
+
+    /**
+     * Create a map of child SVG elements by id.
+     * #IIS
+     * 
+     * @return {!Object} Map of id's to SVG elements.
+     */
+    _createIconMap() {
+      // Objects chained to Object.prototype (`{}`) have members. Specifically,
+      // on FF there is a `watch` method that confuses the icon map, so we
+      // need to use a null-based object here.
+      var icons = Object.create(null);
+      Polymer.dom(this).querySelectorAll('[id]')
+        .forEach((icon) => {
+          icons[icon.id] = icon;
+        });
+      return icons;
+    }
+
+    /**
+     * Get a string representation of the requested SVG marker in this
+     * markerset, or `undefined` if there is no matching element.
+     *
+     * @param {String} id - the id of the marker requested
+     * @param {Number} width - the width of the marker
+     * @param {Number} height - the height of the marker
+     * @return {String} Returns a string SVG element
+     */
+    _getMarkerSvgString(id, width, height) {
+      // create the marker map on-demand
+      this._icons = this._icons || this._createIconMap();
+      if (!this._icons || !this._icons[id]) {
+        return undefined;
+      }
+      return this._prepareSvgClone(this._icons[id], width, height).outerHTML;
+    }
+
+    /**
+     * Builds an SVG element by cloning the marker
+     * and applying the size
+     * #IIS with changes
+     * @param {Element} sourceSvg
+     * @param {number} width
+     * @param {Number} height
+     * @return {Element}
+     */
+    _prepareSvgClone(sourceSvg, width, height) {
+      if (sourceSvg) {
+        let h = height && height >= 2 ? height : 24;
+        let w = width && width >= 2 ? width : h;
+        let content = sourceSvg.cloneNode(true),
+          svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg'),
+          viewBox = content.getAttribute('viewBox') || '0 0 ' + w + ' ' + h,
+          cssText = 'pointer-events: none; display: block;';
+
+        svg.setAttribute('viewBox', viewBox);
+        //svg.setAttribute('preserveAspectRatio', 'xMidYMid meet');
+        svg.setAttribute("width", w);
+        svg.setAttribute("height", h);
+        svg.setAttribute("xmlns", 'http://www.w3.org/2000/svg');
+        // TODO(dfreedm): `pointer-events: none` works around https://crbug.com/370136
+        // TODO(sjmiles): inline style may not be ideal, but avoids requiring a shadow-root
+        // svg.style.cssText = cssText;
+        // svg.appendChild(content).removeAttribute('id');
+        svg.innerHTML = content.innerHTML;
+        return svg;
+      }
+      return null;
+    }
+
+    /**
+     * returns a promise for a reference to the marker set instance
+     * @param {String} setName - name of the marker set
+     * @return {Promise} for a marker set instance
+     */
+    static getMarkerSet(setName) {
+      return new Promise((resolve, reject) => {
+        let meta = Polymer.Base.create('iron-meta', {
+          type: 'plasticMapMarkerSet'
+        });
+        if (meta && typeof meta.byKey === "function" && meta.byKey(setName)) {
+          resolve(meta.byKey(setName));
+        } else {
+          document.addEventListener("plastic-map-marker-set-added", (e) => {
+            if (e.detail.set == setName) {
+              meta = Polymer.Base.create('iron-meta', {
+                type: 'plasticMapMarkerSet'
+              });
+              let markerIconSet = meta.byKey(setName);
+              if (markerIconSet) {
+                resolve(markerIconSet);
+              } else {
+                resolve(null);
+              }
+            }
+          });
+        }
+      });
+    }
+
+    /**
+     * returns a promise for a google.map.icon object for the given
+     * set and iconName
+     * @param {String} setName - the name of the marker icon set
+     * @param {String} iconName - the name of the icon
+     * @param {Number} width - icon width in px
+     * @param {Number} height - icon height in px
+     * @param {Object} dataObj - object containing substitution values for the SVG in the icon
+     * @return {Promise<google.map.icon>} a google.map.icon
+     */
+    static getMarkerSetIcon(setName, iconName, width, height, dataObj) {
+      return PlasticMapMarkerSet.getMarkerSet(setName)
+        .then((markerset) => {
+          return markerset ? markerset.getMarkerIcon(iconName, width, height, dataObj) : null;
+        })
+    }
+
+  }
+
+  window.customElements.define(PlasticMapMarkerSet.is, PlasticMapMarkerSet);
+</script>
