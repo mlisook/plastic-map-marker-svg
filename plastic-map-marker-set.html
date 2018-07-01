@@ -10,60 +10,60 @@
 
 <script>
   /**
-   * Based on iron-iconset-svg, the `plastic-map-marker-set` 
-   * element allows users to define their own sets
-   * custom SVG map marker icons for use with google-map. 
-   * 
-   * Define a set of SVG markers by creating your own custom
-   * element, wrapping your SVG definitions in a `plastic-map-marker-set` element.
-   * 
-   * The svg map marker icon elements should be direct children of the
-   * `plastic-map-marker-set` element. Marker icons should be given distinct id's.
-   * Only top level definitions - `g` elements that are direct children
-   * of the `defs` element should have an `id` attribute.
-   * 
-   * Each definition should have a `viewBox`. This is essential for scaling. If
-   * a definition is missing a viewBox, a default of '0 0 24 24' will be used.
-   *
-   * Example:
-   *
-   *     <plastic-map-marker-set name="my-map-markers" >
-   *       <svg>
-   *         <defs>
-   *           <g id="boxedcircle" viewBox="0 0 24 24">
-   *             <rect style="fill:yellow; stroke:blue;" x="24" y="0" width="24" height="24" />
-   *             <circle style="fill:blue;stroke:white;" cx="12" cy="12" r="6" />
-   *           </g>
-   *           <g id="flag" viewBox="0 0 32 48" >
-   *             <path d="M 1.087 15.462 L 12.419 53.343 L 15.605 51.521 L 4.273 13.638 L 1.087 15.462 Z 
-   *             M 25.973 12.717 C 25.973 12.717 21.447 21.281 14.752 12.024 L 14.752 12.04 
-   *             C 9.979 5.267 5.83 12.973 5.83 12.973 L 12.55 35.288 C 12.55 35.288 15.341 24.327 23.771 35.981 
-   *             L 23.771 35.964 C 28.546 42.739 32.692 35.032 32.692 35.032 L 25.973 12.717 Z"
-   *              style="fill: [[color]];" />
-   *             <text x="12" y="27" fill="[[tcolor]]" style="font-family: Verdana; font-size: 9px; font-weight: bold;">[[mtext]]</text>
-   *             </svg>
-   *           </g>
-   *         </defs>
-   *       </svg>
-   *     </plastic-map-marker-set>
-   *
-   * This will automatically register the map marker icon set "my-map-markers" with Polymer.
-   * 
-   * While it's not actual data binding, marker definitions can have substitutiion points (see "flag" 
-   * marker above), marked with [[some.data.path]] that will be substituted in when you request the
-   * marker.
-   *
-   * To get a marker you can call the static method getMarkerSetIcon which returns a Promise
-   * for a google.map.icon:
-   * 
-   *   PlasticMapMarkerSvg.getMarkerSetIcon(setName, iconName, width, height, dataObj)
-   *     .then((icon) => {
-   *       // do something with the icon
-   *     });
-   *
-   * @element plastic-map-marker-set
-   * @demo demo/index.html
-   */
+     * Based on iron-iconset-svg, the `plastic-map-marker-set` 
+     * element allows users to define their own sets
+     * custom SVG map marker icons for use with google-map. 
+     * 
+     * Define a set of SVG markers by creating your own custom
+     * element, wrapping your SVG definitions in a `plastic-map-marker-set` element.
+     * 
+     * The svg map marker icon elements should be direct children of the
+     * `plastic-map-marker-set` element. Marker icons should be given distinct id's.
+     * Only top level definitions - `g` elements that are direct children
+     * of the `defs` element should have an `id` attribute.
+     * 
+     * Each definition should have a `viewBox`. This is essential for scaling. If
+     * a definition is missing a viewBox, a default of '0 0 24 24' will be used.
+     *
+     * Example:
+     *
+     *     <plastic-map-marker-set name="my-map-markers" >
+     *       <svg>
+     *         <defs>
+     *           <g id="tdpin" viewBox="0 0 500 500">
+                  <path stroke="#434242" fill="[[pinColor]]" d="M250 30c77 0 140 63 140 140 0 24-6 46-16 65l-111 227c-2 5-7 8-13 8s-11-3-13-8l-111-227c-10-19-16-41-16-65 0-77 63-140 140-140z"
+                  />
+                  <circle stroke="#434242" fill="#FCFCFD" cx="250" cy="170" r="100" />
+                  <text text-anchor="middle" x="250" y="210" style="font-family: Verdana; font-size: 90px; font-weight: bold;color:black;stroke:black;">[[markerNum]]</text>
+              </g>
+              <g id="sqpin" viewBox="0 0 485.213 485.212">
+                  <path stroke="[[pinColor]]" fill="[[pinColor]]" d="M333.586,212.282V60.651c16.76,0,30.322-13.562,30.322-30.324C363.908,13.567,350.346,0,333.586,0H151.628
+                  c-16.762,0-30.324,13.567-30.324,30.327c0,16.762,13.562,30.324,30.324,30.324v151.631c-33.496,0-60.651,27.158-60.651,60.648
+                  h121.305v212.282l60.65-60.653V272.93h121.303C394.235,239.439,367.077,212.282,333.586,212.282z M303.255,212.282h-121.3V60.651
+                  h121.3V212.282z"/>
+                  <text text-anchor="middle" x="242" y="165" style="font-family: Verdana; font-size: 95px; font-weight: bold;color:black;stroke:black;">[[markerNum]]</text>
+              </g>
+     *         </defs>
+     *       </svg>
+     *     </plastic-map-marker-set>
+     *
+     * This will automatically register the map marker icon set "my-map-markers" with Polymer.
+     * 
+     * While it's not actual data binding, marker definitions can have substitutiion points (see "flag" 
+     * marker above), marked with [[some.data.path]] that will be substituted in when you request the
+     * marker.
+     *
+     * To get a marker you can call the static method getMarkerSetIcon which returns a Promise
+     * for a google.map.icon:
+     * 
+     *   PlasticMapMarkerSvg.getMarkerSetIcon(setName, iconName, width, height, dataObj)
+     *     .then((icon) => {
+     *       // do something with the icon
+     *     });
+     *
+     * @element plastic-map-marker-set
+     * @demo demo/index.html
+     */
 
   /**
    * `plastic-map-marker-set`
@@ -183,8 +183,11 @@
           x: Math.floor(w / 2),
           y: Math.floor(h)
         },
-        url: this._dataUrl(svg) //,
-        // size: new google.maps.Size(w, h)
+        url: this._dataUrl(svg),
+        scaledSize: {
+          height: h,
+          width: w
+        }
       };
     }
 
@@ -281,7 +284,19 @@
       if (!this._icons || !this._icons[id]) {
         return undefined;
       }
-      return this._prepareSvgClone(this._icons[id], width, height).outerHTML;
+      const clone = this._prepareSvgClone(this._icons[id], width, height);
+      // IE won't return outerHTML on an SVG element, so 
+      // we wrap it in a DIV and get the innerHTML, removing the ID
+      // from the marker.  Of course, we can't actually get the innerHTML
+      // in IE either, so we fake that too.
+      const wrapperDiv = document.createElement("div");
+      wrapperDiv.appendChild(clone);
+      let svgText = wrapperDiv.outerHTML.replace(`id="${id}"`, '').replace('<div>', '').replace('</div>', '');
+      if (svgText.match(/xmlns/g).length > 1) {
+        // IE dups xmlns, so take the extra one out
+        svgText = svgText.replace('xmlns="http://www.w3.org/2000/svg"', '');
+      }
+      return svgText;
     }
 
     /**
@@ -311,7 +326,8 @@
         // TODO(sjmiles): inline style may not be ideal, but avoids requiring a shadow-root
         // svg.style.cssText = cssText;
         // svg.appendChild(content).removeAttribute('id');
-        svg.innerHTML = content.innerHTML;
+        svg.appendChild(content);
+        // svg.innerHTML = content.innerHTML;
         return svg;
       }
       return null;
