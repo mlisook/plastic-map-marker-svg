@@ -1,6 +1,6 @@
 {
   "name": "plastic-map-marker-svg",
-  "version": "0.0.3",
+  "version": "1.0.0",
   "description": "Custom SVG markers for google-map",
   "main": "plastic-map-marker-svg.html",
   "license": "MIT",
