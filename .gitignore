@@ -2,3 +2,4 @@ bower_components
 .vscode
 serve.bat
 demo/apikey.json
+node_modules
