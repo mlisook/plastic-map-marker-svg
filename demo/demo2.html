@@ -6,87 +6,105 @@
   <meta name="viewport" content="width=device-width, minimum-scale=1, initial-scale=1, user-scalable=yes">
 
   <title>plastic-map-marker-svg demo</title>
-  <script>
+
+  <script src="../../@webcomponents/webcomponentsjs/webcomponents-loader.js"></script>
+
+  <script type="module">
+    import '../../@polymer/iron-demo-helpers/demo-pages-shared-styles.js';
+    import '../../@polymer/iron-demo-helpers/demo-snippet.js';
+    import '../../@atomiko/google-map-holdout/google-map.js';
+    import '../plastic-map-marker-svg.js';
+    import './sample-markers.js';
     // use your own api key 
     window.useYourOwnApiKey = "AIzaSyBmsetVvB1KlWoSbEXYQg1leRZO1PVPm_Q";
   </script>
-  <script src="../../webcomponentsjs/webcomponents-lite.js"></script>
-
-  <link rel="import" href="../../iron-demo-helpers/demo-pages-shared-styles.html">
-  <link rel="import" href="../../iron-demo-helpers/demo-snippet.html">
-  <link rel="import" href="../../google-map/google-map.html">
-  <link rel="import" href="../../plastic-aspect-ratio/plastic-aspect-ratio.html">
-  <link rel="import" href="../plastic-map-marker-svg.html">
-  <link rel="import" href="sample-markers.html">
-
   <custom-style>
     <style is="custom-style" include="demo-pages-shared-styles">
-
     </style>
   </custom-style>
-</head>
 
-<body>
   <div class="vertical-section-container centered">
     <h3>Basic plastic-map-marker-svg demo</h3>
-    <p>This demonstrates binding to marker icons based on data. See <a href="index.html">Demo #1</a> for a demonstration of
+    <p>Here we use the plastic-map-marker-svg, replacing google-map-marker, to demonstrate binding to marker icons based on data. See <a href="index.html">Demo #1</a> for a demonstration of
       getting the marker icon in code.</p>
-      <p>For a more complete demo see the <a href="https://mlisook.github.io/plastic-map-marker-svg">project page</a>.</p>
     <demo-snippet>
       <template>
         <dom-bind id="domb">
           <template id="t" is="dom-bind">
-            <plastic-aspect-ratio style="width:100%;" aspect-width="4" aspect-height="3">
               <template is="dom-if" if="[[apiKey]]">
-                <google-map id="gm" style="width:100%;height:100%;" latitude="37.779" longitude="-122.3892" min-zoom="9" max-zoom="11" language="en"
-                  api-key="[[apiKey]]">
+                <google-map id="gm" style="width:100%;height:350px;" latitude="37.779" longitude="-122.3892" min-zoom="9" max-zoom="11" language="en" api-key="[[apiKey]]">
                   <template is="dom-repeat" items="[[points]]">
-                    <plastic-map-marker-svg slot="markers" latitude="[[item.lat]]" longitude="[[item.lng]]" icon-name="[[item.markerStyle.iconName]]"
-                      icon-height="[[item.markerStyle.height]]" icon-width="[[item.markerStyle.width]]" icon-data="[[item.markerStyle.iconData]]">
+                    <plastic-map-marker-svg slot="markers" 
+                      latitude="[[item.lat]]" longitude="[[item.lng]]" 
+                      icon-name="[[item.markerStyle.iconName]]" icon-height="[[item.markerStyle.height]]" 
+                      icon-width="[[item.markerStyle.width]]" icon-data="[[item.markerStyle.iconData]]">
                       <p>Yo! Some infowindow stuff!</p>
                     </plastic-map-marker-svg>
                   </template>
                 </google-map>
               </template>
-            </plastic-aspect-ratio>
           </template>
         </dom-bind>
-        <script>
+      
+        <script type="module">
           let domb = document.getElementById("domb");
           // replace with your own google api key
-          domb.apiKey = window.useYourOwnApiKey;
-          domb.points = [];
-          window.addEventListener('WebComponentsReady', () => {
-            domb.points = [{
-                lat: 37.779,
-                lng: -122.3892,
-                markerStyle: {
-                  iconName: "sample-markers:flag",
-                  height: 48,
-                  width: 32,
-                  iconData: {
-                    color: "blue",
-                    tcolor: "white",
-                    mtext: "Yo"
-                  }
-                }
-              },
-              {
-                lat: 37.825805,
-                lng: -122.479284,
-                markerStyle: {
-                  iconName: "sample-markers:boxedcircle",
-                  height: 24,
-                  width: 24,
-                  iconData: {}
+          domb.apiKey = useYourOwnApiKey;
+          domb.points = [{
+              lat: 37.779,
+              lng: -122.3892,
+              markerStyle: {
+                iconName: "sample-markers:tdpin",
+                height: 48,
+                width: 48,
+                iconData: {
+                  pinColor: "blue",
+                  markerNum: "Yo"
                 }
               }
-            ];
-          });
-        </script>
-      </template>
-    </demo-snippet>
-  </div>
-</body>
+            },
+            {
+              lat: 37.825805,
+              lng: -122.479284,
+              markerStyle: {
+                iconName: "sample-markers:sqpin",
+                height: 48,
+                width: 48,
+                iconData: {
+                  pinColor: "green",
+                  markerNum: "7"
+                }
+              }
+            },
+            {
+              lat: 37.803482, 
+              lng: -122.272143,
+              markerStyle: {
+                iconName: "sample-markers:bus",
+                height: 48,
+                width: 48,
+                iconData: {
+                  color: "darkgray",
+                  mtext: "44X",
+                  tcolor: "navy"
+                }
+              }
+            },
+            {
+              lat: 37.881973,
+              lng:  -122.269142,
+              markerStyle: {
+                iconName: "sample-markers:user",
+                height: 36,
+                width: 36,
+                iconData: {
+                  color: "orange"
+                }
+              }
+            }
 
-</html>
+          ];
+        </script>
+</template>
+</demo-snippet>
+</div>
