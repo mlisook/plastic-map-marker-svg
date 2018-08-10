@@ -6,10 +6,11 @@
     "google-map",
     "marker",
     "web-components",
-    "svg"
+    "svg",
+    "typescript"
   ],
   "name": "plastic-map-marker-svg",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "repository": {
     "type": "git",
     "url": "https://github.com/mlisook/plastic-map-marker-svg.git"
@@ -30,7 +31,7 @@
   },
   "devDependencies": {
     "@polymer/iron-demo-helpers": "^3.0.0-pre.18",
-    "wct-browser-legacy": "^0.0.1-pre.11",
-    "@webcomponents/webcomponentsjs": "^2.0.2"
+    "@webcomponents/webcomponentsjs": "^2.0.2",
+    "wct-browser-legacy": "^0.0.1-pre.11"
   }
 }

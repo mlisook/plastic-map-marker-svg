@@ -2,6 +2,8 @@
 
 Custom SVG map marker icons for google-map
 
+See the [live demo site](https://mlisook.github.io/plastic-map-marker-svg) for samples and code.
+
 ## What is it?
 The elements in this package allow you to create a collection of SVG icons that can be used with `google-map-marker`, or with the Google Maps Javascript API, in the same way you would use `iron-iconset-svg` to create a collection of icons for `iron-icon`.
 
