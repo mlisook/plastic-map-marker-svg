@@ -1,5 +1,8 @@
 # \<plastic-map-marker-svg\>
 
+[![Published on Vaadin  Directory](https://img.shields.io/badge/Vaadin%20Directory-published-00b4f0.svg)](https://vaadin.com/directory/component/mlisookplastic-map-marker-svg)
+[![Stars on Vaadin Directory](https://img.shields.io/vaadin-directory/star/mlisookplastic-map-marker-svg.svg)](https://vaadin.com/directory/component/mlisookplastic-map-marker-svg)
+
 Custom SVG map marker icons for google-map
 
 See the [live demo site](https://mlisook.github.io/plastic-map-marker-svg) for samples and code.
